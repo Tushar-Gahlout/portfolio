@@ -16,20 +16,21 @@ export const profile = {
 
 export const links = {
   email: "rajputtushar119@gmail.com",
-  phone: "",
-  github: "",
+  phone: "9389147847",
+  github: "https://github.com/Tushar-Gahlout",
   linkedin: "",
-  leetcode: "",
+  leetcode: "https://leetcode.com/u/Tushar_Gahlout/",
   website: "",
   resume: "",
   other: [] as { label: string; url: string }[],
 };
 
 export const skills: { category: string; items: string[] }[] = [
-  { category: "Programming Languages", items: ["C", "C++", "Java", "Python"] },
-  { category: "Web Development", items: ["HTML", "CSS", "Node.js"] },
+  { category: "Programming Languages", items: ["C", "C++", "Java", "Python", "JavaScript"] },
+  { category: "Web Development", items: ["HTML", "CSS", "Tailwind CSS", "Node.js"] },
   { category: "Database", items: ["SQL"] },
-  { category: "Tools & Platforms", items: ["Git", "GitHub"] },
+  { category: "Tools & Platforms", items: ["Git", "GitHub", "VS Code"] },
+  { category: "AI & ML", items: ["Machine Learning", "Scikit-learn", "Pandas", "NumPy", "Matplotlib", "Seaborn"] },
   { category: "Computer Science", items: ["Data Structures"] },
 ];
 
@@ -55,7 +56,32 @@ export type Project = {
 // Add projects here — cards appear automatically. Put images in public/projects/ and use "/projects/name.jpg".
 // Example:
 // { name: "My App", description: "What it does", tech: ["Node.js", "SQL"], image: "/projects/my-app.jpg", github: "https://github.com/...", demo: "https://..." }
-export const projects: Project[] = [];
+export const projects: Project[] = [
+  {
+    name: "ChronoGen AI — Timetable Generator",
+    description:
+      "An AI-powered timetable generator that automatically creates clash-free class schedules for teachers, rooms and subjects.",
+    tech: [],
+    github: "",
+    demo: "",
+  },
+  {
+    name: "Bus Management System",
+    description:
+      "A system to manage buses, routes, schedules and bookings in one place, making bus operations easier to run and track.",
+    tech: [],
+    github: "",
+    demo: "",
+  },
+  {
+    name: "AI Railway Management System",
+    description:
+      "An AI-assisted railway management system for handling trains, schedules, reservations and passenger information.",
+    tech: [],
+    github: "",
+    demo: "",
+  },
+];
 
 export const careerInterests = [
   "Backend Development",
@@ -65,6 +91,7 @@ export const careerInterests = [
   "APIs",
   "Data Structures & Algorithms",
   "Building scalable web applications",
+  "AI & ML Engineering",
 ];
 
 export const journey = [
@@ -73,7 +100,7 @@ export const journey = [
     stage: "Learning & Building",
     items: ["Web Development", "Backend Development", "Databases", "Data Structures & Algorithms"],
   },
-  { stage: "Future Goal", items: ["Professional Backend Engineer"] },
+  { stage: "Future Goal", items: ["Professional Backend Engineer", "AI & ML Engineer"] },
 ];
 
 export const hackathons = [
@@ -85,7 +112,7 @@ export const hackathons = [
     prize: "₹5,000",
     description: "Competed against teams from across the country and secured a consolation prize.",
     // Put photos in public/hackathons/ and list them here, e.g. ["/hackathons/gfg-1.jpg", "/hackathons/gfg-2.jpg"]
-    photos: [] as string[],
+    photos: ["/hackathons/gfg-miro-hackathon.jpg"],
   },
   {
     name: "AWS Club Hackathon",
@@ -94,6 +121,46 @@ export const hackathons = [
     result: "2nd Place",
     prize: "₹3,000",
     description: "Won second place in the university-level hackathon hosted by the AWS Club.",
-    photos: [] as string[],
+    photos: ["/hackathons/aws-club-hackathon.jpg"],
+  },
+];
+
+export type Certificate = {
+  title: string;
+  type: string;
+  issuer: string;
+  date: string;
+  image: string;
+};
+
+// Add more certificates here. Put images in public/certificates/ and use "/certificates/name.jpg".
+export const certificates: Certificate[] = [
+  {
+    title: "Watch the Code — National Level Hackathon",
+    type: "Certificate of Achievement (Consolation Position)",
+    issuer: "Tech Geeks Club, Graphic Era Hill University, Haldwani",
+    date: "18–19 April 2026",
+    image: "/certificates/watch-the-code-achievement.jpg",
+  },
+  {
+    title: "Watch the Code — National Level Hackathon",
+    type: "Certificate of Participation",
+    issuer: "Tech Geeks Club, Graphic Era Hill University, Haldwani",
+    date: "18–19 April 2026",
+    image: "/certificates/watch-the-code-participation.jpg",
+  },
+  {
+    title: "SAARTHI Hackathon 2025 (24 Hours National Level)",
+    type: "Certificate of Participation",
+    issuer: "Dept. of CSE & School of Computing, Graphic Era Hill University, Dehradun",
+    date: "8–9 November 2025",
+    image: "/certificates/saarthi-25.jpg",
+  },
+  {
+    title: "Webathon 4.0",
+    type: "Certificate of Participation",
+    issuer: "Tech Geeks Club, Graphic Era Hill University, Haldwani",
+    date: "21 September 2026",
+    image: "/certificates/webathon-4.jpg",
   },
 ];

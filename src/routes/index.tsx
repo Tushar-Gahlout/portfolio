@@ -3,7 +3,9 @@ import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from
 import { z } from "zod";
 import {
   ArrowUpRight,
+  Award,
   Braces,
+  BrainCircuit,
   CheckCircle2,
   Circle,
   Code2,
@@ -27,6 +29,7 @@ import { AdminLogin, HackathonPhotoUpload, ProjectUploadForm, useOwner } from "@
 import { supabase, type DbHackathonPhoto, type DbProject } from "@/lib/supabase";
 import {
   careerInterests,
+  certificates,
   education,
   hackathons,
   journey,
@@ -51,7 +54,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const nav = ["About", "Education", "Skills", "Projects", "Hackathons", "Contact"];
+const nav = ["About", "Education", "Skills", "Projects", "Hackathons", "Certificates", "Contact"];
 
 function GithubIcon({ className = "h-5 w-5" }: { className?: string }) {
   return <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5Z" /></svg>;
@@ -209,7 +212,7 @@ function ContactForm() {
 }
 
 const skillIcons: Record<string, ReactNode> = {
-  "Programming Languages": <Braces />, "Web Development": <Globe />, Database: <Database />, "Tools & Platforms": <Wrench />, "Computer Science": <Terminal />,
+  "Programming Languages": <Braces />, "Web Development": <Globe />, Database: <Database />, "Tools & Platforms": <Wrench />, "AI & ML": <BrainCircuit />, "Computer Science": <Terminal />,
 };
 
 function Index() {
@@ -275,17 +278,19 @@ function Index() {
               const all = [...item.photos.map((src) => ({ id: "", src })), ...uploaded.map((photo) => ({ id: photo.id, src: photo.image_url }))];
               return (
                 <>
-                  {all.length ? <div className={`mt-6 grid gap-2 ${all.length > 1 ? "grid-cols-2" : ""}`}>{all.map((photo) => <div key={photo.src} className="relative"><img src={photo.src} alt={`${item.name} journey`} className="aspect-video w-full object-cover" />{isOwner && photo.id && <button type="button" aria-label="Remove photo" onClick={() => removePhoto(photo.id)} className="absolute right-2 top-2 rounded-full bg-background p-1.5 text-destructive shadow"><Trash2 className="h-4 w-4" /></button>}</div>)}</div> : <div className="mt-6 flex aspect-video flex-col items-center justify-center gap-2 border border-dashed border-border bg-secondary text-muted-foreground"><ImagePlus className="h-8 w-8" /><span className="text-sm">Journey photo coming soon</span></div>}
+                  {all.length ? <div className={`mt-6 grid gap-2 ${all.length > 1 ? "grid-cols-2" : ""}`}>{all.map((photo) => <div key={photo.src} className="relative"><img src={photo.src} alt={`${item.name} journey`} className="max-h-[28rem] w-full bg-secondary object-contain" />{isOwner && photo.id && <button type="button" aria-label="Remove photo" onClick={() => removePhoto(photo.id)} className="absolute right-2 top-2 rounded-full bg-background p-1.5 text-destructive shadow"><Trash2 className="h-4 w-4" /></button>}</div>)}</div> : <div className="mt-6 flex aspect-video flex-col items-center justify-center gap-2 border border-dashed border-border bg-secondary text-muted-foreground"><ImagePlus className="h-8 w-8" /><span className="text-sm">Journey photo coming soon</span></div>}
                   {isOwner && <HackathonPhotoUpload hackathonKey={item.name} onAdded={load} />}
                 </>
               );
             })()}<h3 className="mt-6 font-display text-2xl font-semibold">{item.name}</h3><p className="mt-2 text-sm text-muted-foreground">{item.organizer}</p><p className="mt-5 text-3xl font-bold">{item.result}</p><p className="mt-1 font-mono text-lg">{item.prize} prize</p><p className="mt-4 text-muted-foreground">{item.description}</p></article>)}</div></Section>
 
-        <Section id="journey" eyebrow="06 / Journey" title="Learning Path" muted><div className="grid gap-px border border-border bg-border md:grid-cols-3">{journey.map((item, index) => <article key={item.stage} className="bg-background p-7"><span className="font-mono text-sm text-muted-foreground">0{index + 1}</span><h3 className="mt-5 text-2xl font-semibold">{item.stage}</h3><ul className="mt-5 space-y-3">{item.items.map((entry) => <li key={entry} className="flex items-start gap-3 text-muted-foreground"><Circle className="mt-2 h-2 w-2 shrink-0 fill-current" />{entry}</li>)}</ul></article>)}</div></Section>
+        <Section id="certificates" eyebrow="06 / Certificates" title="Certificates" muted><div className="grid gap-8 sm:grid-cols-2">{certificates.map((cert) => <article key={cert.image} className="border-t border-foreground pt-5"><div className="flex items-center justify-between gap-3"><span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border"><Award className="h-5 w-5" /></span><span className="chip">{cert.date}</span></div><a href={cert.image} target="_blank" rel="noreferrer" aria-label={`View ${cert.title} certificate`} className="mt-6 block overflow-hidden border border-border bg-secondary"><img src={cert.image} alt={`${cert.title} — ${cert.type}`} loading="lazy" className="aspect-[4/3] w-full object-contain transition hover:scale-[1.02]" /></a><h3 className="mt-6 font-display text-xl font-semibold">{cert.title}</h3><p className="mt-1 font-medium">{cert.type}</p><p className="mt-2 text-sm text-muted-foreground">{cert.issuer}</p></article>)}</div></Section>
 
-        <Section id="contact" eyebrow="07 / Contact" title="Let's Build Something"><div className="grid gap-14 md:grid-cols-2"><div><p className="max-w-md text-xl leading-relaxed text-muted-foreground">Open to internships, college opportunities, and collaborations. Tell me what you are working on.</p><div className="mt-9 flex flex-wrap gap-3">{[...profileLinks, ...extraLinks].map((item) => <IconLink key={item.label} {...item} />)}</div></div><ContactForm /></div></Section>
+        <Section id="journey" eyebrow="07 / Journey" title="Learning Path" muted><div className="grid gap-px border border-border bg-border md:grid-cols-3">{journey.map((item, index) => <article key={item.stage} className="bg-background p-7"><span className="font-mono text-sm text-muted-foreground">0{index + 1}</span><h3 className="mt-5 text-2xl font-semibold">{item.stage}</h3><ul className="mt-5 space-y-3">{item.items.map((entry) => <li key={entry} className="flex items-start gap-3 text-muted-foreground"><Circle className="mt-2 h-2 w-2 shrink-0 fill-current" />{entry}</li>)}</ul></article>)}</div></Section>
+
+        <Section id="contact" eyebrow="08 / Contact" title="Let's Build Something"><div className="grid gap-14 md:grid-cols-2"><div><p className="max-w-md text-xl leading-relaxed text-muted-foreground">Open to internships, college opportunities, and collaborations. Tell me what you are working on.</p><div className="mt-9 flex flex-wrap gap-3">{[...profileLinks, ...extraLinks].map((item) => <IconLink key={item.label} {...item} />)}</div></div><ContactForm /></div></Section>
       </main>
-      <footer className="bg-primary py-10 text-primary-foreground"><div className="mx-auto flex max-w-6xl flex-col justify-between gap-5 px-5 md:flex-row"><div><p className="text-xl font-bold">{profile.name}</p><p className="text-sm opacity-70">Aspiring Backend Developer</p></div><p className="text-sm opacity-70">© {new Date().getFullYear()} {profile.name}. All rights reserved.</p></div></footer>
+      <footer className="bg-primary py-10 text-primary-foreground"><div className="mx-auto flex max-w-6xl flex-col justify-between gap-5 px-5 md:flex-row"><div><p className="text-xl font-bold">{profile.name}</p><p className="text-sm opacity-70">Aspiring Backend Developer</p></div><p className="text-sm opacity-70">©️ {new Date().getFullYear()} {profile.name}. All rights reserved.</p></div></footer>
     </div>
   );
 }
