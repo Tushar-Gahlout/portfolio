@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { z } from "zod";
 import {
+  ArrowDownToLine,
   ArrowUpRight,
   Award,
   BookOpen,
@@ -16,8 +17,10 @@ import {
   Copy,
   Cpu,
   Database,
+  Download,
   ExternalLink,
   Eye,
+  FileCheck,
   FileText,
   FolderGit2,
   Globe,
@@ -31,6 +34,7 @@ import {
   Server,
   Share2,
   Sparkles,
+  Star,
   Sun,
   Terminal,
   Trash2,
@@ -44,9 +48,11 @@ import { supabase, type DbHackathonPhoto, type DbProject } from "@/lib/supabase"
 import {
   careerInterests,
   certificates,
+  coreStrengths,
   education,
   hackathons,
   journey,
+  languages,
   links,
   profile,
   projects,
@@ -58,17 +64,17 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Tushar Gahlout — Backend & Software Engineer" },
+      { title: "Tushar Gahlout — Web & Backend Developer | AI/ML" },
       {
         name: "description",
         content:
-          "Portfolio of Tushar Gahlout, B.Tech CSE (AI & ML) student specializing in Backend Development, Scalable Databases, and High-Performance APIs.",
+          "Portfolio of Tushar Gahlout, B.Tech (Hons.) CSE (AI & ML) student at Graphic Era Hill University (CGPA 8.34). Web & Backend Developer specializing in React.js, Node.js, Express, REST APIs, and databases.",
       },
-      { property: "og:title", content: "Tushar Gahlout — Backend & Software Engineer" },
+      { property: "og:title", content: "Tushar Gahlout — Web & Backend Developer | AI/ML" },
       {
         property: "og:description",
         content:
-          "Discover Tushar Gahlout's backend systems, competitive hackathon wins, AI/ML skills, and developer projects.",
+          "Explore Tushar Gahlout's AI Time Table Generator, College Bus Management System, hackathon podiums, resume, and skills.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -83,6 +89,7 @@ const navLinks = [
   { name: "Projects", href: "#projects" },
   { name: "Hackathons", href: "#hackathons" },
   { name: "Certificates", href: "#certificates" },
+  { name: "Resume", href: "#resume" },
   { name: "Journey", href: "#journey" },
   { name: "Contact", href: "#contact" },
 ];
@@ -141,7 +148,7 @@ function Navbar({ isDark, onToggleTheme }: { isDark: boolean; onToggleTheme: () 
             </p>
             <p className="text-[11px] font-mono text-muted-foreground mt-0.5 flex items-center gap-1.5">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Backend Dev
+              Web & Backend Dev
             </p>
           </div>
         </a>
@@ -152,7 +159,7 @@ function Navbar({ isDark, onToggleTheme }: { isDark: boolean; onToggleTheme: () 
             <a
               key={item.name}
               href={item.href}
-              className="px-3.5 py-1.5 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
+              className="px-3 py-1.5 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
             >
               {item.name}
             </a>
@@ -160,7 +167,17 @@ function Navbar({ isDark, onToggleTheme }: { isDark: boolean; onToggleTheme: () 
         </nav>
 
         {/* Actions & Theme Toggle */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          <a
+            href={links.resume}
+            target="_blank"
+            rel="noreferrer"
+            className="hidden md:inline-flex items-center gap-1.5 text-xs font-medium px-3.5 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-colors"
+          >
+            <FileText className="h-3.5 w-3.5" />
+            <span>Resume</span>
+          </a>
+
           <button
             type="button"
             onClick={onToggleTheme}
@@ -207,6 +224,14 @@ function Navbar({ isDark, onToggleTheme }: { isDark: boolean; onToggleTheme: () 
           </div>
           <div className="pt-3 border-t border-border flex items-center justify-between">
             <div className="flex gap-2">
+              <a
+                href={links.resume}
+                target="_blank"
+                rel="noreferrer"
+                className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 text-xs font-semibold flex items-center gap-1"
+              >
+                <FileText className="h-4 w-4" /> CV
+              </a>
               <a
                 href={links.github}
                 target="_blank"
@@ -292,24 +317,71 @@ function ContactForm() {
         }
       }
 
-      // Relayed via validated same-origin API route per LOVABLE agent architecture
-      const response = await fetch("/api/public/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsed.data),
-      });
+      // Try same-origin API route first
+      let sent = false;
+      let isActivation = false;
+      try {
+        const response = await fetch("/api/public/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(parsed.data),
+        });
 
-      const result = (await response.json().catch(() => ({}))) as { ok?: boolean; code?: string };
-      if (response.status === 409 || result.code === "activation_required") {
-        setStatus("activate");
-        return;
-      }
-      if (!response.ok || !result.ok) {
-        throw new Error(result.code ?? "Failed");
+        const result = (await response.json().catch(() => ({}))) as { ok?: boolean; code?: string; message?: string };
+        if (response.status === 409 || result.code === "activation_required") {
+          setStatus("activate");
+          return;
+        }
+        if (response.ok && result.ok) {
+          sent = true;
+        }
+      } catch {
+        // Continue to direct fallback
       }
 
-      form.reset();
-      setStatus("ok");
+      // Fallback: Direct FormSubmit.co submission from browser
+      if (!sent) {
+        const directRes = await fetch(`https://formsubmit.co/ajax/${links.email}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            name: parsed.data.name,
+            email: parsed.data.email,
+            message: parsed.data.message,
+            _subject: `Portfolio inquiry from ${parsed.data.name}`,
+            _replyto: parsed.data.email,
+            _template: "table",
+            _captcha: "false",
+          }),
+        });
+
+        const directResult = (await directRes.json().catch(() => ({}))) as {
+          success?: boolean | string;
+          message?: string;
+        };
+
+        const msg = (directResult.message || "").toLowerCase();
+        if (msg.includes("activat")) {
+          setStatus("activate");
+          return;
+        }
+
+        if (
+          directRes.ok &&
+          (directResult.success === true ||
+            directResult.success === "true" ||
+            (directResult.success !== false && directResult.success !== "false"))
+        ) {
+          sent = true;
+        }
+      }
+
+      if (sent) {
+        form.reset();
+        setStatus("ok");
+      } else {
+        setStatus("fail");
+      }
     } catch {
       setStatus("fail");
     }
@@ -331,7 +403,7 @@ function ContactForm() {
             id="name"
             name="name"
             className="field"
-            placeholder="Alex Rivera"
+            placeholder="Your Name"
             aria-invalid={Boolean(errors["name"])}
           />
           {errors["name"] && <p className="mt-1 text-xs text-rose-500">{errors["name"]}</p>}
@@ -346,7 +418,7 @@ function ContactForm() {
             name="email"
             type="email"
             className="field"
-            placeholder="alex@domain.com"
+            placeholder="you@domain.com"
             aria-invalid={Boolean(errors["email"])}
           />
           {errors["email"] && <p className="mt-1 text-xs text-rose-500">{errors["email"]}</p>}
@@ -361,7 +433,7 @@ function ContactForm() {
             name="message"
             rows={4}
             className="field resize-none"
-            placeholder="Let's build something scalable together..."
+            placeholder="Tell me about your project, idea, or role..."
             aria-invalid={Boolean(errors["message"])}
           />
           {errors["message"] && <p className="mt-1 text-xs text-rose-500">{errors["message"]}</p>}
@@ -397,18 +469,28 @@ function ContactForm() {
             </p>
           )}
           {status === "fail" && (
-            <p className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs mt-3">
-              Transmission failed. Please reach out directly to{" "}
-              <a href={`mailto:${links.email}`} className="underline font-semibold">
-                {links.email}
+            <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs space-y-2 mt-3">
+              <p className="font-semibold">⚠️ Submission encountered a network issue.</p>
+              <p>You can send your message directly via email client:</p>
+              <a
+                href={`mailto:${links.email}?subject=Portfolio Inquiry`}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-rose-500 text-white font-semibold hover:bg-rose-600 transition-colors"
+              >
+                <Mail className="h-3.5 w-3.5" /> Email Directly ({links.email})
               </a>
-              .
-            </p>
+            </div>
           )}
           {status === "activate" && (
-            <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs space-y-1.5 mt-3">
-              <p className="font-semibold">⚠️ Initial Setup Confirmation Required</p>
-              <p>Form backend sent an activation verification to {links.email}. Click that email link once to activate visitor submissions.</p>
+            <div className="p-4 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-200 text-xs space-y-2 mt-3">
+              <p className="font-bold text-sm flex items-center gap-1.5">
+                <span>📬</span> One-Time Email Activation Required
+              </p>
+              <p className="leading-relaxed">
+                FormSubmit has sent a confirmation email to <strong>{links.email}</strong> with an <strong>"Activate Form"</strong> link.
+              </p>
+              <p className="leading-relaxed text-amber-300/90">
+                👉 Open your email (check Inbox & Spam) and click <strong>"Activate Form"</strong> once. After activation, all visitor inquiries will arrive directly in your inbox!
+              </p>
             </div>
           )}
         </div>
@@ -486,7 +568,6 @@ function ModernPortfolio() {
   const [dbPhotos, setDbPhotos] = useState<DbHackathonPhoto[]>([]);
   const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
   const [skillsFilter, setSkillsFilter] = useState<string>("All");
-  const [projectFilter, setProjectFilter] = useState<string>("All");
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   // Sync theme
@@ -547,18 +628,13 @@ function ModernPortfolio() {
     image: row.image_url ?? undefined,
     github: row.github ?? undefined,
     demo: row.demo ?? undefined,
-    category: "Backend",
+    category: "Web Application",
   });
 
   const allProjects: Project[] = [
     ...projects,
     ...dbProjects.map((row) => toProject(row)),
   ];
-
-  const filteredProjects =
-    projectFilter === "All"
-      ? allProjects
-      : allProjects.filter((p) => p.category?.toLowerCase() === projectFilter.toLowerCase());
 
   const categoryList = ["All", ...skills.map((s) => s.category)];
   const filteredSkills =
@@ -591,16 +667,16 @@ function ModernPortfolio() {
 
                 {/* Big Headline */}
                 <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.08]">
-                  Architecting <br />
-                  <span className="text-gradient-accent">Scalable Backend</span> <br />
-                  Systems & APIs
+                  Web & Backend <br />
+                  <span className="text-gradient-accent">Developer | AI/ML</span> <br />
+                  Specialist
                 </h1>
 
                 {/* Intro summary */}
                 <p className="max-w-xl text-base sm:text-lg text-muted-foreground leading-relaxed">
-                  Hi, I'm <strong className="text-foreground font-semibold">Tushar Gahlout</strong> — a B.Tech CSE (AI & ML)
-                  student at Graphic Era Hill University. I specialize in server-side architecture, high-throughput REST APIs,
-                  database optimization, and intelligent machine learning systems.
+                  Hi, I'm <strong className="text-foreground font-semibold">Tushar Gahlout</strong> — a B.Tech (Hons.) CSE (AI & ML)
+                  student at Graphic Era Hill University (CGPA 8.34). I build practical, high-performance web applications,
+                  intelligent AI scheduling tools, and scalable REST API architectures.
                 </p>
 
                 {/* CTAs */}
@@ -614,10 +690,18 @@ function ModernPortfolio() {
                   </a>
 
                   <a
+                    href="#resume"
+                    className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-card border border-emerald-500/40 text-emerald-400 font-semibold text-sm hover:bg-emerald-500/10 transition-all"
+                  >
+                    <FileText className="h-4 w-4" />
+                    <span>View Resume</span>
+                  </a>
+
+                  <a
                     href="#contact"
                     className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-card border border-border/80 hover:border-foreground/30 text-foreground font-medium text-sm transition-all hover:bg-foreground/5"
                   >
-                    <span>Get in Touch</span>
+                    <span>Contact</span>
                   </a>
 
                   <div className="h-6 w-px bg-border/80 mx-1 hidden sm:block" />
@@ -661,7 +745,7 @@ function ModernPortfolio() {
                 {/* Mini tech badge row */}
                 <div className="pt-3 flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground">
                   <span className="text-[11px] uppercase tracking-wider text-muted-foreground/70">Core Stack:</span>
-                  {["Node.js", "Express", "SQL", "Python", "C++", "REST APIs"].map((tech) => (
+                  {["React.js", "Node.js", "Express.js", "MongoDB", "MySQL", "Supabase", "Python"].map((tech) => (
                     <span
                       key={tech}
                       className="px-2.5 py-1 rounded-md bg-card/70 border border-border/70 text-foreground font-medium"
@@ -716,7 +800,7 @@ function ModernPortfolio() {
                           {profile.name}
                         </h2>
                         <p className="text-xs text-slate-300 mt-0.5">
-                          Graphic Era Hill University, Bhimtal
+                          Graphic Era Hill University • CGPA 8.34
                         </p>
                       </div>
                       <span className="font-mono text-[11px] text-emerald-400 bg-emerald-500/20 border border-emerald-500/40 px-3 py-1 rounded-full font-semibold backdrop-blur-md">
@@ -737,21 +821,24 @@ function ModernPortfolio() {
                         <span className="h-2 w-2 rounded-full bg-emerald-500/70" />
                       </span>
                     </div>
-                    <p className="text-slate-500">// Real-time Profile Status</p>
+                    <p className="text-slate-500">// Real-time Profile Config</p>
                     <p>
-                      <span className="text-cyan-400">export const</span> engineer = &#123;
+                      <span className="text-cyan-400">export const</span> developer = &#123;
                     </p>
                     <p className="pl-4">
                       name: <span className="text-emerald-300">"Tushar Gahlout"</span>,
                     </p>
                     <p className="pl-4">
-                      role: <span className="text-emerald-300">"Backend Developer & AI/ML Specialist"</span>,
+                      role: <span className="text-emerald-300">"Web & Backend Developer | AI/ML"</span>,
                     </p>
                     <p className="pl-4">
-                      stack: [<span className="text-amber-300">"Node.js"</span>, <span className="text-amber-300">"SQL"</span>, <span className="text-amber-300">"Python"</span>, <span className="text-amber-300">"C++"</span>],
+                      academics: <span className="text-amber-300">"B.Tech (Hons.) CSE • CGPA 8.34/10"</span>,
                     </p>
                     <p className="pl-4">
-                      location: <span className="text-cyan-400">"Bhimtal, India"</span>,
+                      featuredProjects: [<span className="text-cyan-400">"AI Time Table Generator"</span>, <span className="text-cyan-400">"College Bus Management"</span>],
+                    </p>
+                    <p className="pl-4">
+                      resume: <span className="text-emerald-400">"/Tushar_Gahlout_Resume.pdf"</span>,
                     </p>
                     <p>&#125;;</p>
                   </div>
@@ -766,10 +853,10 @@ function ModernPortfolio() {
           <div className="max-w-7xl mx-auto px-5 sm:px-8">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {[
-                { label: "Academic Standing", value: "3rd Sem", sub: "Graphic Era Hill Univ.", icon: <GraduationCap className="h-5 w-5 text-emerald-400" /> },
-                { label: "Hackathon Podiums", value: "2x Winner", sub: "National & Univ. Level", icon: <Trophy className="h-5 w-5 text-amber-400" /> },
-                { label: "Problem Solving", value: "500+ Solved", sub: "Data Structures & Algos", icon: <Code2 className="h-5 w-5 text-cyan-400" /> },
-                { label: "System Focus", value: "Scalable APIs", sub: "High Availability & DBs", icon: <Server className="h-5 w-5 text-indigo-400" /> },
+                { label: "Academic Standing", value: "8.34 CGPA", sub: "B.Tech (Hons.) AI & ML", icon: <GraduationCap className="h-5 w-5 text-emerald-400" /> },
+                { label: "Hackathon Podiums", value: "2x Winner", sub: "GFG × Miro & AWS Club", icon: <Trophy className="h-5 w-5 text-amber-400" /> },
+                { label: "Featured Projects", value: "Production Apps", sub: "Live on Vercel & GitHub", icon: <Boxes className="h-5 w-5 text-cyan-400" /> },
+                { label: "Core Stack", value: "Full-Stack + AI", sub: "React, Node, DBs, Python", icon: <Server className="h-5 w-5 text-indigo-400" /> },
               ].map((stat) => (
                 <div
                   key={stat.label}
@@ -797,7 +884,7 @@ function ModernPortfolio() {
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> 01 / Identity
               </p>
               <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight mt-2">
-                About Me & Vision
+                About Me & Professional Summary
               </h2>
             </div>
 
@@ -805,7 +892,7 @@ function ModernPortfolio() {
               {/* Main Story Card */}
               <div className="lg:col-span-7 glass-card rounded-3xl p-7 sm:p-9 space-y-5 border border-border/80">
                 <div className="flex items-center gap-2 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-wider">
-                  <Terminal className="h-4 w-4" /> The Journey & Motivation
+                  <Terminal className="h-4 w-4" /> Professional Background
                 </div>
                 {profile.about.map((paragraph, idx) => (
                   <p key={idx} className="text-muted-foreground leading-relaxed text-base sm:text-lg">
@@ -815,10 +902,10 @@ function ModernPortfolio() {
 
                 <div className="pt-4 border-t border-border flex flex-wrap gap-4 text-sm">
                   <div className="flex items-center gap-2 text-foreground font-medium">
-                    <MapPin className="h-4 w-4 text-emerald-400" /> Bhimtal, Uttarakhand, India
+                    <MapPin className="h-4 w-4 text-emerald-400" /> Jaspur / Bhimtal, Uttarakhand, India
                   </div>
                   <div className="flex items-center gap-2 text-foreground font-medium">
-                    <BookOpen className="h-4 w-4 text-cyan-400" /> Graphic Era Hill University
+                    <GraduationCap className="h-4 w-4 text-cyan-400" /> Graphic Era Hill University (CGPA 8.34)
                   </div>
                 </div>
               </div>
@@ -827,13 +914,13 @@ function ModernPortfolio() {
               <div className="lg:col-span-5 space-y-6">
                 <div className="glass-card rounded-3xl p-7 border border-border/80 space-y-4">
                   <div className="flex items-center gap-2 text-cyan-400 text-xs font-mono font-semibold uppercase tracking-wider">
-                    <Server className="h-4 w-4" /> Career Specialization
+                    <Server className="h-4 w-4" /> Core Interests & Focus
                   </div>
                   <h3 className="font-display text-xl font-bold text-foreground">
-                    Backend & Scalable Systems Engineer
+                    Web & Backend Engineering | AI/ML
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Focused on creating high-performance services, efficient data layers, reliable background jobs, and robust APIs.
+                    Developing clash-free automated scheduling engines, transport monitoring platforms, and reliable database architectures.
                   </p>
                   <div className="flex flex-wrap gap-2 pt-2">
                     {careerInterests.map((interest) => (
@@ -849,13 +936,13 @@ function ModernPortfolio() {
 
                 <div className="glass-card rounded-3xl p-6 border border-border/80 flex items-center justify-between gap-4">
                   <div>
-                    <p className="text-xs font-mono text-muted-foreground uppercase">Interested in Collaboration?</p>
-                    <p className="text-base font-bold font-display text-foreground mt-0.5">Let's discuss opportunities</p>
+                    <p className="text-xs font-mono text-muted-foreground uppercase">Looking for official credentials?</p>
+                    <p className="text-base font-bold font-display text-foreground mt-0.5">Explore Verified Resume</p>
                   </div>
                   <a
-                    href="#contact"
+                    href="#resume"
                     className="p-3 rounded-xl bg-foreground text-background hover:scale-105 transition-all shadow-md shrink-0"
-                    aria-label="Contact directly"
+                    aria-label="Go to resume section"
                   >
                     <ArrowUpRight className="h-5 w-5" />
                   </a>
@@ -874,7 +961,7 @@ function ModernPortfolio() {
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> 02 / Capabilities
                 </p>
                 <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight mt-2">
-                  Technical Toolkit
+                  Technical Skills & Stack
                 </h2>
               </div>
 
@@ -904,16 +991,16 @@ function ModernPortfolio() {
                   switch (group.category) {
                     case "Programming Languages":
                       return <Braces className="h-5 w-5 text-emerald-400" />;
-                    case "Web Development":
+                    case "Frontend Development":
                       return <Globe className="h-5 w-5 text-cyan-400" />;
-                    case "Database":
+                    case "Backend Development":
+                      return <Server className="h-5 w-5 text-indigo-400" />;
+                    case "Databases":
                       return <Database className="h-5 w-5 text-amber-400" />;
                     case "Tools & Platforms":
-                      return <Wrench className="h-5 w-5 text-indigo-400" />;
+                      return <Wrench className="h-5 w-5 text-purple-400" />;
                     case "AI & ML":
                       return <BrainCircuit className="h-5 w-5 text-rose-400" />;
-                    case "Computer Science":
-                      return <Terminal className="h-5 w-5 text-purple-400" />;
                     default:
                       return <Code2 className="h-5 w-5 text-emerald-400" />;
                   }
@@ -957,33 +1044,16 @@ function ModernPortfolio() {
         {/* ===================== PROJECTS SECTION ===================== */}
         <section id="projects" className="py-20 sm:py-28 border-b border-border/50">
           <div className="max-w-7xl mx-auto px-5 sm:px-8">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-              <div>
-                <p className="font-mono text-xs uppercase tracking-widest text-emerald-400 flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> 03 / Selected Work
-                </p>
-                <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight mt-2">
-                  Featured Projects
-                </h2>
-              </div>
-
-              {/* Category Filter */}
-              <div className="flex flex-wrap gap-1.5 bg-card/80 p-1.5 rounded-2xl border border-border/80 backdrop-blur-md">
-                {["All", "Backend", "AI & ML", "Database", "Algorithms"].map((category) => (
-                  <button
-                    key={category}
-                    type="button"
-                    onClick={() => setProjectFilter(category)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all ${
-                      projectFilter === category
-                        ? "bg-foreground text-background shadow-sm"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
+            <div className="max-w-2xl mb-12">
+              <p className="font-mono text-xs uppercase tracking-widest text-emerald-400 flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> 03 / Selected Work
+              </p>
+              <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight mt-2">
+                Featured Projects
+              </h2>
+              <p className="text-muted-foreground mt-2">
+                Real-world web and automation systems built, deployed, and tested.
+              </p>
             </div>
 
             {/* Admin Controls */}
@@ -992,15 +1062,18 @@ function ModernPortfolio() {
 
             {/* Projects Grid */}
             <div className="grid md:grid-cols-2 gap-8">
-              {filteredProjects.map((project, index) => {
+              {allProjects.map((project, index) => {
                 const dbRow = dbProjects.find((p) => p.name === project.name);
+                const isTimetable = project.name.toLowerCase().includes("time table");
+                const isBus = project.name.toLowerCase().includes("bus");
+
                 return (
                   <article
                     key={project.name + index}
-                    className="glass-card rounded-3xl p-7 border border-border/80 flex flex-col justify-between group"
+                    className="glass-card rounded-3xl p-7 sm:p-8 border border-border/80 flex flex-col justify-between group"
                   >
                     <div>
-                      {/* Top banner / image / mock */}
+                      {/* Top banner visual header */}
                       <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-slate-900 to-slate-950 border border-border/70 mb-6 flex items-center justify-center p-6">
                         {project.image ? (
                           <img
@@ -1010,15 +1083,21 @@ function ModernPortfolio() {
                           />
                         ) : (
                           <div className="text-center space-y-3">
-                            <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400">
-                              <Server className="h-6 w-6" />
+                            <div className="h-14 w-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center mx-auto text-emerald-400 shadow-lg">
+                              {isTimetable ? (
+                                <Calendar className="h-7 w-7 text-emerald-400" />
+                              ) : isBus ? (
+                                <Boxes className="h-7 w-7 text-cyan-400" />
+                              ) : (
+                                <Server className="h-7 w-7 text-emerald-400" />
+                              )}
                             </div>
                             <div className="space-y-1">
-                              <span className="font-mono text-[11px] uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
-                                {project.category ?? "Backend System"}
+                              <span className="font-mono text-[11px] uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 font-semibold">
+                                {project.category ?? "Web Application"}
                               </span>
-                              <p className="font-display font-semibold text-sm text-slate-300">
-                                Scalable Architecture
+                              <p className="font-display font-semibold text-sm text-slate-200">
+                                {isTimetable ? "Automated Clash-Free Scheduler" : isBus ? "Transport & Live Attendance Solution" : "Full-Stack Project"}
                               </p>
                             </div>
                           </div>
@@ -1029,9 +1108,9 @@ function ModernPortfolio() {
                         <h3 className="font-display text-2xl font-bold text-foreground group-hover:text-emerald-400 transition-colors">
                           {project.name}
                         </h3>
-                        {project.category && (
-                          <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-foreground/5 border border-border text-muted-foreground">
-                            {project.category}
+                        {project.featured && (
+                          <span className="text-[11px] font-mono flex items-center gap-1 text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2.5 py-0.5 rounded-full font-medium">
+                            <Star className="h-3 w-3 fill-amber-400" /> Featured
                           </span>
                         )}
                       </div>
@@ -1054,24 +1133,24 @@ function ModernPortfolio() {
 
                     <div className="pt-4 border-t border-border flex items-center justify-between gap-4">
                       <div className="flex items-center gap-4">
-                        {project.github && (
-                          <a
-                            href={project.github}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground hover:text-emerald-400 transition-colors"
-                          >
-                            <GithubIcon className="h-4 w-4" /> Code Repository
-                          </a>
-                        )}
                         {project.demo && (
                           <a
                             href={project.demo}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 hover:underline"
+                            className="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 hover:bg-emerald-600 transition-all shadow-sm"
                           >
-                            <ExternalLink className="h-4 w-4" /> Live Demo
+                            <ExternalLink className="h-3.5 w-3.5" /> Live Demo
+                          </a>
+                        )}
+                        {project.github && (
+                          <a
+                            href={project.github}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-xl bg-card border border-border/80 text-foreground hover:border-foreground transition-all"
+                          >
+                            <GithubIcon className="h-3.5 w-3.5" /> GitHub Repo
                           </a>
                         )}
                       </div>
@@ -1104,7 +1183,7 @@ function ModernPortfolio() {
                 Hackathon Podiums
               </h2>
               <p className="text-muted-foreground mt-2">
-                Building solutions under strict time limits, solving high-impact problems, and earning recognition.
+                Recognized in national and university technical competitions for backend architecture and practical engineering.
               </p>
             </div>
 
@@ -1254,91 +1333,210 @@ function ModernPortfolio() {
           </div>
         </section>
 
-        {/* ===================== EDUCATION & JOURNEY ===================== */}
-        <section id="journey" className="py-20 sm:py-28 border-b border-border/50 bg-card/20">
+        {/* ===================== RESUME SECTION ===================== */}
+        <section id="resume" className="py-20 sm:py-28 border-b border-border/50 bg-card/25">
           <div className="max-w-7xl mx-auto px-5 sm:px-8">
-            <div className="grid lg:grid-cols-12 gap-12">
-              {/* Education Column */}
-              <div className="lg:col-span-6 space-y-6">
-                <div>
-                  <p className="font-mono text-xs uppercase tracking-widest text-emerald-400 flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> 06 / Academics
-                  </p>
-                  <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight mt-2">
-                    Formal Education
-                  </h2>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+              <div>
+                <p className="font-mono text-xs uppercase tracking-widest text-emerald-400 flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> 06 / Official Resume
+                </p>
+                <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight mt-2">
+                  Curriculum Vitae
+                </h2>
+                <p className="text-muted-foreground mt-2">
+                  View full professional credentials, verified academic scores, and technical competencies.
+                </p>
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex flex-wrap items-center gap-3">
+                <a
+                  href={links.resume}
+                  download="Tushar_Gahlout_Resume.pdf"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold text-xs shadow-lg shadow-emerald-500/20 transition-all hover:scale-105"
+                >
+                  <Download className="h-4 w-4" /> Download Resume PDF
+                </a>
+                <a
+                  href={links.resume}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-card border border-border/80 hover:border-foreground text-foreground text-xs font-medium transition-all"
+                >
+                  <ExternalLink className="h-4 w-4" /> Open in New Tab
+                </a>
+              </div>
+            </div>
+
+            {/* Resume Interactive Document Preview */}
+            <div className="glass-card rounded-3xl p-6 sm:p-10 border border-border/80 shadow-2xl relative overflow-hidden">
+              <div className="max-w-4xl mx-auto space-y-8">
+                {/* Resume Header */}
+                <div className="border-b border-border pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h3 className="font-display font-extrabold text-2xl sm:text-3xl text-foreground tracking-tight">
+                      {profile.name}
+                    </h3>
+                    <p className="font-mono text-xs sm:text-sm font-semibold text-emerald-400 mt-1 uppercase tracking-wider">
+                      {profile.title}
+                    </p>
+                  </div>
+                  <div className="text-xs font-mono text-muted-foreground space-y-1 sm:text-right">
+                    <p className="flex items-center sm:justify-end gap-1.5">
+                      <MapPin className="h-3.5 w-3.5 text-emerald-400" /> Jaspur, Uttarakhand, India
+                    </p>
+                    <p className="flex items-center sm:justify-end gap-1.5">
+                      <Mail className="h-3.5 w-3.5 text-cyan-400" /> {links.email}
+                    </p>
+                    <p className="flex items-center sm:justify-end gap-1.5">
+                      <Phone className="h-3.5 w-3.5 text-amber-400" /> +91 {links.phone}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="space-y-4 pt-2">
-                  {education.map((item, idx) => (
-                    <div
-                      key={item.degree}
-                      className="glass-card rounded-2xl p-6 border border-border/80 flex items-start gap-4"
-                    >
-                      <div className="h-10 w-10 rounded-xl bg-foreground/5 border border-border/80 flex items-center justify-center font-mono font-bold text-sm text-emerald-400 shrink-0">
-                        0{idx + 1}
-                      </div>
-                      <div>
-                        <h3 className="font-display font-bold text-base text-foreground">
-                          {item.degree}
-                        </h3>
-                        <p className="text-sm text-muted-foreground mt-0.5">{item.school}</p>
-                        <div className="flex flex-wrap gap-2 mt-3">
-                          {item.details.map((detail) => (
+                {/* Professional Summary */}
+                <div>
+                  <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2">
+                    Professional Summary
+                  </h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {profile.intro}
+                  </p>
+                </div>
+
+                {/* Core Strengths & Languages */}
+                <div className="grid sm:grid-cols-2 gap-6 pt-2">
+                  <div>
+                    <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-cyan-400 mb-2">
+                      Core Strengths
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {coreStrengths.map((str) => (
+                        <span
+                          key={str}
+                          className="px-2.5 py-1 rounded-md text-xs font-medium bg-foreground/5 border border-border/70 text-foreground"
+                        >
+                          {str}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">
+                      Languages
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {languages.map((lang) => (
+                        <span
+                          key={lang}
+                          className="px-2.5 py-1 rounded-md text-xs font-medium bg-foreground/5 border border-border/70 text-foreground"
+                        >
+                          {lang}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Academic Highlights */}
+                <div>
+                  <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3">
+                    Academic Background
+                  </h4>
+                  <div className="space-y-3">
+                    {education.map((item) => (
+                      <div
+                        key={item.degree}
+                        className="p-4 rounded-xl bg-foreground/5 border border-border/70 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                      >
+                        <div>
+                          <p className="font-semibold text-sm text-foreground">{item.degree}</p>
+                          <p className="text-xs text-muted-foreground">{item.school}</p>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {item.details.map((d) => (
                             <span
-                              key={detail}
-                              className="px-2.5 py-1 rounded-md text-[11px] font-mono bg-foreground/5 border border-border/70 text-foreground"
+                              key={d}
+                              className="font-mono text-[11px] px-2 py-0.5 rounded bg-background border border-border text-emerald-400 font-medium"
                             >
-                              {detail}
+                              {d}
                             </span>
                           ))}
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Journey & Roadmap Column */}
-              <div className="lg:col-span-6 space-y-6">
-                <div>
-                  <p className="font-mono text-xs uppercase tracking-widest text-cyan-400 flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" /> 07 / Roadmap
-                  </p>
-                  <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight mt-2">
-                    Evolution & Aspirations
-                  </h2>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="space-y-4 pt-2">
-                  {journey.map((step, idx) => (
-                    <div
-                      key={step.stage}
-                      className="glass-card rounded-2xl p-6 border border-border/80 space-y-3"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-mono uppercase text-cyan-400 font-semibold">
-                          Phase 0{idx + 1}
-                        </span>
-                        <span className="h-2 w-2 rounded-full bg-cyan-400" />
-                      </div>
-                      <h3 className="font-display font-bold text-lg text-foreground">
-                        {step.stage}
-                      </h3>
-                      <div className="flex flex-wrap gap-2">
-                        {step.items.map((entry) => (
-                          <span
-                            key={entry}
-                            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-foreground/5 border border-border/70 text-foreground"
-                          >
-                            {entry}
-                          </span>
-                        ))}
-                      </div>
+                {/* Embedded PDF Download Banner */}
+                <div className="p-6 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-cyan-500/10 to-indigo-500/10 border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+                      <FileCheck className="h-6 w-6" />
                     </div>
-                  ))}
+                    <div>
+                      <p className="font-display font-bold text-base text-foreground">
+                        Tushar_Gahlout_Resume.pdf
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Verified ATS-formatted PDF document • Updated October 2026
+                      </p>
+                    </div>
+                  </div>
+
+                  <a
+                    href={links.resume}
+                    download="Tushar_Gahlout_Resume.pdf"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold text-xs shadow-md transition-all shrink-0"
+                  >
+                    <ArrowDownToLine className="h-4 w-4" /> Download PDF
+                  </a>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ===================== JOURNEY / ROADMAP ===================== */}
+        <section id="journey" className="py-20 sm:py-28 border-b border-border/50">
+          <div className="max-w-7xl mx-auto px-5 sm:px-8">
+            <div className="max-w-2xl mb-12">
+              <p className="font-mono text-xs uppercase tracking-widest text-cyan-400 flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" /> 07 / Roadmap
+              </p>
+              <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight mt-2">
+                Learning & Career Path
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {journey.map((step, idx) => (
+                <div
+                  key={step.stage}
+                  className="glass-card rounded-2xl p-6 border border-border/80 space-y-3"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono uppercase text-cyan-400 font-semibold">
+                      Phase 0{idx + 1}
+                    </span>
+                    <span className="h-2 w-2 rounded-full bg-cyan-400" />
+                  </div>
+                  <h3 className="font-display font-bold text-lg text-foreground">
+                    {step.stage}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {step.items.map((entry) => (
+                      <span
+                        key={entry}
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium bg-foreground/5 border border-border/70 text-foreground"
+                      >
+                        {entry}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -1357,7 +1555,7 @@ function ModernPortfolio() {
                     Let's Build Together.
                   </h2>
                   <p className="text-muted-foreground mt-4 text-base leading-relaxed">
-                    I am actively seeking backend engineering internships, collaborative development projects, and technical opportunities. Feel free to ping me directly or fill out the form.
+                    I am actively seeking web and backend development internships, freelance collaborations, and software engineering opportunities.
                   </p>
                 </div>
 
@@ -1411,7 +1609,7 @@ function ModernPortfolio() {
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground font-mono">Location</p>
-                      <p className="font-medium text-sm text-foreground">Bhimtal, Uttarakhand, India</p>
+                      <p className="font-medium text-sm text-foreground">Jaspur / Bhimtal, Uttarakhand, India</p>
                     </div>
                   </div>
                 </div>
@@ -1436,14 +1634,14 @@ function ModernPortfolio() {
                     >
                       <LeetCodeIcon className="h-4 w-4" /> LeetCode
                     </a>
-                    {links.linkedin && (
+                    {links.website && (
                       <a
-                        href={links.linkedin}
+                        href={links.website}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-card border border-border/80 hover:border-cyan-400 text-sm font-medium transition-all"
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-card border border-border/80 hover:border-emerald-400 text-sm font-medium transition-all"
                       >
-                        <LinkedinIcon className="h-4 w-4" /> LinkedIn
+                        <Globe className="h-4 w-4" /> Live Web App
                       </a>
                     )}
                   </div>
@@ -1468,12 +1666,12 @@ function ModernPortfolio() {
             </div>
             <div>
               <p className="font-semibold text-foreground text-sm">{profile.name}</p>
-              <p className="text-xs">Backend Developer • B.Tech CSE (AI & ML)</p>
+              <p className="text-xs">Web & Backend Developer | AI/ML • CGPA 8.34</p>
             </div>
           </div>
 
           <div className="flex items-center gap-6 text-xs">
-            {navLinks.slice(0, 5).map((l) => (
+            {navLinks.slice(0, 6).map((l) => (
               <a key={l.name} href={l.href} className="hover:text-foreground transition-colors">
                 {l.name}
               </a>

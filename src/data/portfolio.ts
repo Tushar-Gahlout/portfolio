@@ -3,14 +3,14 @@
 
 export const profile = {
   name: "Tushar Gahlout",
-  title: "Aspiring Backend Developer | B.Tech CSE (AI & ML) Student",
+  title: "Web & Backend Developer | AI/ML",
   intro:
-    "Tushar Gahlout is a B.Tech Computer Science Engineering student specializing in Artificial Intelligence & Machine Learning, passionate about web development and aspiring to build a career as a Backend Engineer.",
+    "Computer Science Engineering student pursuing a B.Tech (Hons.) with a specialization in Artificial Intelligence & Machine Learning. Hands-on experience in web and backend development using JavaScript, React.js, Node.js, Express.js, REST APIs, and databases. Experienced in building practical applications and contributing to award-winning technical events.",
   // Put a photo URL or imported image here to replace the initials placeholder.
   photo: "/profile.jpg",
   about: [
-    "I am Tushar Gahlout, a B.Tech Computer Science Engineering student specializing in Artificial Intelligence & Machine Learning at Graphic Era Hill University, Bhimtal. I am currently in my 3rd semester and am passionate about web development, programming, databases, and problem solving.",
-    "My primary career goal is to become a skilled Backend Engineer and build reliable, scalable, and efficient web applications. I keep learning and improving my technical skills through projects, coding practice, and problem solving.",
+    "I am Tushar Gahlout, a B.Tech (Hons.) Computer Science Engineering student specializing in Artificial Intelligence & Machine Learning at Graphic Era Hill University, Bhimtal (2025–2029) with a current CGPA of 8.34/10.",
+    "Passionate about web and backend development, I build practical, scalable applications using JavaScript, React.js, Node.js, Express.js, REST APIs, and databases. Experienced in building real-world solutions and contributing to award-winning technical events.",
   ],
 };
 
@@ -20,28 +20,36 @@ export const links = {
   github: "https://github.com/Tushar-Gahlout",
   linkedin: "",
   leetcode: "https://leetcode.com/u/Tushar_Gahlout/",
-  website: "",
-  resume: "",
+  website: "https://aitime-tablegenerator.vercel.app/",
+  resume: "/Tushar_Gahlout_Resume.pdf",
   other: [] as { label: string; url: string }[],
 };
 
 export const skills: { category: string; items: string[] }[] = [
   { category: "Programming Languages", items: ["C", "C++", "Java", "Python", "JavaScript"] },
-  { category: "Web Development", items: ["HTML", "CSS", "Tailwind CSS", "Node.js"] },
-  { category: "Database", items: ["SQL"] },
-  { category: "Tools & Platforms", items: ["Git", "GitHub", "VS Code"] },
-  { category: "AI & ML", items: ["Machine Learning", "Scikit-learn", "Pandas", "NumPy", "Matplotlib", "Seaborn"] },
-  { category: "Computer Science", items: ["Data Structures"] },
+  { category: "Frontend Development", items: ["HTML5", "CSS3", "JavaScript", "React.js", "Tailwind CSS"] },
+  { category: "Backend Development", items: ["Node.js", "Express.js", "REST APIs"] },
+  { category: "Databases", items: ["MongoDB", "MySQL", "Supabase"] },
+  { category: "AI & ML", items: ["NumPy", "Pandas", "Matplotlib", "Scikit-learn", "TensorFlow"] },
+  { category: "Tools & Platforms", items: ["Git", "GitHub", "VS Code", "Vercel"] },
 ];
 
 export const education = [
   {
-    degree: "B.Tech in Computer Science Engineering — AI & ML Specialization",
+    degree: "B.Tech (Hons.) in Computer Science & Engineering — Specialization in AI & ML",
     school: "Graphic Era Hill University, Bhimtal",
-    details: ["Expected Graduation: 2029", "Current Semester: 3rd"],
+    details: ["Duration: 2025–2029", "CGPA: 8.34 / 10", "Current Semester: 3rd"],
   },
-  { degree: "Class 12", school: "Baldev Singh Inter College, Jaspur", details: ["CBSE Affiliated"] },
-  { degree: "Class 10", school: "Maria School, Jaspur", details: ["ICSE Affiliated"] },
+  {
+    degree: "Class XII",
+    school: "Baldev Singh Inter College, Jaspur",
+    details: ["CBSE Affiliated", "Score: 84%"],
+  },
+  {
+    degree: "Class X",
+    school: "Maria School, Jaspur",
+    details: ["ICSE Affiliated", "Score: 88.6%"],
+  },
 ];
 
 export type Project = {
@@ -58,36 +66,20 @@ export type Project = {
 // Add projects here — cards appear automatically. Put images in public/projects/ and use "/projects/name.jpg".
 export const projects: Project[] = [
   {
-    name: "API Gateway & Auth Service Engine",
-    description: "High-throughput server-side authentication and routing engine with JWT token rotation, rate-limiting, and role-based access control.",
-    tech: ["Node.js", "Express", "SQL", "REST API", "JWT"],
-    github: "https://github.com/Tushar-Gahlout",
-    category: "Backend",
+    name: "AI Time Table Generator",
+    description: "Automated scheduling application that generates clash-free timetables for colleges and organizations, targeting common scheduling conflicts. Deployed on Vercel and maintained through GitHub.",
+    tech: ["React.js", "Node.js", "JavaScript", "Tailwind CSS", "Vercel", "AI Scheduling"],
+    demo: "https://aitime-tablegenerator.vercel.app/",
+    category: "AI & Web",
     featured: true,
   },
   {
-    name: "Predictive Analytics & ML Pipeline",
-    description: "Machine learning workflow for tabular datasets with statistical feature engineering, data cleaning, and scikit-learn model evaluation.",
-    tech: ["Python", "Scikit-learn", "Pandas", "NumPy", "Matplotlib"],
-    github: "https://github.com/Tushar-Gahlout",
-    category: "AI & ML",
+    name: "College Bus Management System",
+    description: "Built a college bus management solution for monitoring student transportation and live attendance. Focused on user interface, application workflow, and route management. Secured 2nd Position in Innovate 1.0 Ideathon by AWS Club.",
+    tech: ["React.js", "JavaScript", "Tailwind CSS", "REST APIs", "Node.js"],
+    github: "https://github.com/Tushar-Gahlout/College_Bus_Management_System.git",
+    category: "Web Application",
     featured: true,
-  },
-  {
-    name: "Relational Query & Schema Optimizer",
-    description: "Benchmarked relational database design showcasing indexing strategies, normalized transactions, and optimized SQL query execution.",
-    tech: ["SQL", "Node.js", "Database Design", "Performance"],
-    github: "https://github.com/Tushar-Gahlout",
-    category: "Database",
-    featured: true,
-  },
-  {
-    name: "High-Performance Data Structures & Algos Suite",
-    description: "Modular C++ and Java implementation of core algorithmic paradigms, graph traversals, and dynamic programming problem sets.",
-    tech: ["C++", "Java", "DSA", "Algorithms"],
-    github: "https://github.com/Tushar-Gahlout",
-    category: "Algorithms",
-    featured: false,
   },
 ];
 
@@ -95,43 +87,51 @@ export const careerInterests = [
   "Backend Development",
   "Web Development",
   "Server-side Programming",
-  "Databases",
-  "APIs",
+  "Databases (MongoDB, MySQL, Supabase)",
+  "REST APIs",
   "Data Structures & Algorithms",
-  "Building scalable web applications",
   "AI & ML Engineering",
 ];
 
 export const journey = [
-  { stage: "Currently", items: ["B.Tech CSE (AI & ML)"] },
+  { stage: "Currently", items: ["B.Tech (Hons.) CSE (AI & ML) — CGPA 8.34/10", "3rd Semester @ GEHU Bhimtal"] },
   {
-    stage: "Learning & Building",
-    items: ["Web Development", "Backend Development", "Databases", "Data Structures & Algorithms"],
+    stage: "Building & Competing",
+    items: ["AI Time Table Generator", "College Bus Management System", "Hackathon Podiums (GFG × Miro, AWS Club)"],
   },
-  { stage: "Future Goal", items: ["Professional Backend Engineer", "AI & ML Engineer"] },
+  { stage: "Future Goal", items: ["Professional Web & Backend Developer", "AI/ML Solutions Engineer"] },
 ];
 
 export const hackathons = [
   {
-    name: "Geeks for Geeks × Miro Hackathon",
+    name: "Watch the Code — National-Level Hackathon (2026)",
     level: "National Level",
-    organizer: "Organised by GeeksforGeeks and Miro",
-    result: "Consolation Prize",
+    organizer: "Organized by GeeksforGeeks and Miro",
+    result: "Consolation Prize (Team Tech4All)",
     prize: "₹5,000",
-    description: "Competed against teams from across the country and secured a consolation prize.",
-    // Put photos in public/hackathons/ and list them here, e.g. ["/hackathons/gfg-1.jpg", "/hackathons/gfg-2.jpg"]
+    description: "Backend Developer for Team Tech4All; competed against teams from across the country and secured a ₹5,000 consolation prize.",
     photos: ["/hackathons/gfg-miro-hackathon.jpg"],
   },
   {
-    name: "AWS Club Hackathon",
+    name: "Innovate 1.0 — Ideathon (2026)",
     level: "University / Internal",
-    organizer: "Organised by the AWS Club of Graphic Era Hill University",
-    result: "2nd Place",
+    organizer: "Organized by the AWS Club of Graphic Era Hill University, Bhimtal",
+    result: "2nd Position",
     prize: "₹3,000",
-    description: "Won second place in the university-level hackathon hosted by the AWS Club.",
+    description: "Backend Developer for College Bus Management System; pitched and built solution securing 2nd position in the university ideathon.",
     photos: ["/hackathons/aws-club-hackathon.jpg"],
   },
 ];
+
+export const coreStrengths = [
+  "Problem Solving",
+  "Teamwork",
+  "Communication",
+  "Adaptability",
+  "Fast Learning",
+];
+
+export const languages = ["English", "Hindi"];
 
 export type Certificate = {
   title: string;

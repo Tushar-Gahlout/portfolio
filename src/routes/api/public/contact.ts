@@ -31,9 +31,10 @@ export const Route = createFileRoute("/api/public/contact")({
         const sent = response.ok && result.success !== false && result.success !== "false";
         if (sent) return Response.json({ ok: true });
 
-        const activation = result.message?.toLowerCase().includes("activation") ?? false;
+        const msg = (result.message || "").toLowerCase();
+        const activation = msg.includes("activat");
         return Response.json(
-          { ok: false, code: activation ? "activation_required" : "delivery_failed" },
+          { ok: false, code: activation ? "activation_required" : "delivery_failed", message: result.message },
           { status: activation ? 409 : 502 },
         );
       },
