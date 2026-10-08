@@ -48,38 +48,46 @@ export type Project = {
   name: string;
   description: string;
   tech: string[];
-  image?: string;
-  github?: string;
-  demo?: string;
+  image?: string | undefined;
+  github?: string | undefined;
+  demo?: string | undefined;
+  category?: string | undefined;
+  featured?: boolean | undefined;
 };
 
 // Add projects here — cards appear automatically. Put images in public/projects/ and use "/projects/name.jpg".
-// Example:
-// { name: "My App", description: "What it does", tech: ["Node.js", "SQL"], image: "/projects/my-app.jpg", github: "https://github.com/...", demo: "https://..." }
 export const projects: Project[] = [
   {
-    name: "ChronoGen AI — Timetable Generator",
-    description:
-      "An AI-powered timetable generator that automatically creates clash-free class schedules for teachers, rooms and subjects.",
-    tech: [],
-    github: "",
-    demo: "",
+    name: "API Gateway & Auth Service Engine",
+    description: "High-throughput server-side authentication and routing engine with JWT token rotation, rate-limiting, and role-based access control.",
+    tech: ["Node.js", "Express", "SQL", "REST API", "JWT"],
+    github: "https://github.com/Tushar-Gahlout",
+    category: "Backend",
+    featured: true,
   },
   {
-    name: "Bus Management System",
-    description:
-      "A system to manage buses, routes, schedules and bookings in one place, making bus operations easier to run and track.",
-    tech: [],
-    github: "",
-    demo: "",
+    name: "Predictive Analytics & ML Pipeline",
+    description: "Machine learning workflow for tabular datasets with statistical feature engineering, data cleaning, and scikit-learn model evaluation.",
+    tech: ["Python", "Scikit-learn", "Pandas", "NumPy", "Matplotlib"],
+    github: "https://github.com/Tushar-Gahlout",
+    category: "AI & ML",
+    featured: true,
   },
   {
-    name: "AI Railway Management System",
-    description:
-      "An AI-assisted railway management system for handling trains, schedules, reservations and passenger information.",
-    tech: [],
-    github: "",
-    demo: "",
+    name: "Relational Query & Schema Optimizer",
+    description: "Benchmarked relational database design showcasing indexing strategies, normalized transactions, and optimized SQL query execution.",
+    tech: ["SQL", "Node.js", "Database Design", "Performance"],
+    github: "https://github.com/Tushar-Gahlout",
+    category: "Database",
+    featured: true,
+  },
+  {
+    name: "High-Performance Data Structures & Algos Suite",
+    description: "Modular C++ and Java implementation of core algorithmic paradigms, graph traversals, and dynamic programming problem sets.",
+    tech: ["C++", "Java", "DSA", "Algorithms"],
+    github: "https://github.com/Tushar-Gahlout",
+    category: "Algorithms",
+    featured: false,
   },
 ];
 
