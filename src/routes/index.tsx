@@ -44,6 +44,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AdminLogin, HackathonPhotoUpload, ProjectUploadForm, useOwner } from "@/components/admin";
+import { VoiceAssistant } from "@/components/voice-assistant";
 import { supabase, type DbHackathonPhoto, type DbProject } from "@/lib/supabase";
 import {
   careerInterests,
@@ -1689,6 +1690,9 @@ function ModernPortfolio() {
         certificate={selectedCert}
         onClose={() => setSelectedCert(null)}
       />
+
+      {/* AI Voice Assistant */}
+      <VoiceAssistant onToggleTheme={toggleTheme} />
     </div>
   );
 }
